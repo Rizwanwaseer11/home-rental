@@ -73,11 +73,7 @@ app.use(limiter);
 // session configuration for login through https:
 app.set('trust proxy', 1);
 
-console.log("✅ MONGO_URI in server.js:", process.env.MONGO_URI);
-if (!process.env.MONGO_URI) {
-  console.error("❌ ERROR: MONGO_URI not found in environment!");
-}
-
+c
 // 1. Session middleware (must be first)
 app.use(session({
   secret: process.env.SESSION_SECRET || "keyboardcat",
