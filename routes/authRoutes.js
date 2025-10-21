@@ -5,7 +5,7 @@ const router = express.Router();
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/mailer");
-require("dotenv").config();
+// require("dotenv").config();
 
 // ======================= SHOW SIGNUP FORM =======================
 router.get("/signup", (req, res) => {

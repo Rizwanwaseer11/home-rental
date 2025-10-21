@@ -1,7 +1,7 @@
 // utils/mailer.js
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-require("dotenv").config();
+// require("dotenv").config();
 
 // OAuth2 setup for Gmail API
 const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
