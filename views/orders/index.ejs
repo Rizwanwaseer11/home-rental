@@ -1,0 +1,71 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-light">
+  <%- include('../partials/nav') %>
+ 
+  <main class="container py-5">
+    <h2 class="mb-4 text-center text-primary">Orders for Your Properties</h2>
+    <% if (bookings.length === 0) { %>
+      <div class="alert alert-info text-center">No orders yet.</div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Property</th>
+              <th>Renter</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Booked At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(function(b) { %>
+              <tr>
+                <td>
+                  <% if (b.propertyId) { %>
+                    <a href="/orders/details/<%= b._id %>" class="text-primary text-decoration-underline"><%= b.propertyId.title %></a>
+                  <% } else { %>
+                    N/A
+                  <% } %>
+                </td>
+                <td><%= b.renterId ? b.renterId.email : 'N/A' %></td>
+                <td class="fw-semibold">
+                  <% if (b.status === 'pending') { %>
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  <% } else if (b.status === 'confirmed') { %>
+                    <span class="badge bg-success">Accepted</span>
+                  <% } else if (b.status === 'cancelled') { %>
+                    <span class="badge bg-danger">Rejected</span>
+                  <% } %>
+                </td>
+                <td>Rs <%= b.payment && b.payment.amount ? b.payment.amount : 'N/A' %></td>
+
+                <td><%= b.createdAt.toLocaleString() %></td>
+                <td>
+                  <% if (b.status === 'pending') { %>
+                    <form method="POST" action="/orders/<%= b._id %>/accept" class="d-inline">
+                   
+                      <button class="btn btn-success btn-sm">Accept</button>
+                    </form>
+                    <form method="POST" action="/orders/<%= b._id %>/reject" class="d-inline ms-2">
+                     
+                      <button class="btn btn-danger btn-sm">Reject</button>
+                    </form>
+                  <% } else if (b.status === 'confirmed') { %>
+                    <span class="text-success">Accepted</span>
+                  <% } else if (b.status === 'rejected') { %>
+                    <span class="text-danger">Rejected</span>
+                  <% } %>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </main>
+ 
+</body>
+</html>

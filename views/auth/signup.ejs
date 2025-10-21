@@ -1,0 +1,43 @@
+<%- include('../partials/header') %>
+</head>
+
+<body class="bg-light">
+  <%- include('../partials/nav') %>
+  <main class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+      <h2 class="mb-4 text-center text-success">Signup</h2>
+      <% if (typeof errors !== 'undefined' && errors.length) { %>
+        <div class="alert alert-danger py-2">
+          <ul class="mb-0 ps-3">
+            <% errors.forEach(e => { %><li><%= e.msg || e %></li><% }) %>
+          </ul>
+        </div>
+      <% } %>
+      <form method="POST" action="/auth/signup">
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input type="text" name="name" class="form-control" placeholder="Name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Password (min 6)" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-select">
+            <option value="renter">Renter</option>
+            <option value="owner">Owner</option>
+          </select>
+        </div>
+        <button class="btn btn-success w-100">Create account</button>
+      </form>
+    </div>
+  </main>
+ 
+</body>
+</html>
+</html>

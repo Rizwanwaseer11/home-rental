@@ -1,0 +1,78 @@
+# ==========================================
+# 🚫 Sensitive Files
+# ==========================================
+.env
+.env.local
+.env.*.local
+
+# ==========================================
+# 🧠 System Files
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+debug.log
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# 📦 Node Modules
+# ==========================================
+node_modules/
+
+# ==========================================
+# ⚙️ Build / Cache / Temp
+# ==========================================
+dist/
+build/
+.cache/
+temp/
+tmp/
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# ==========================================
+# 🖼️ Uploads / User Files
+
+
+# ==========================================
+# 🧩 Editor / IDE Config
+# ==========================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================================
+# 🧰 Environment or Project Tools
+# ==========================================
+*.envrc
+*.npmrc
+*.tgz
+*.zip
+*.tar.gz
+*.rar
+
+# ==========================================
+# 📦 Package Lock Files (optional)
+# comment out the one you want to keep
+package-lock.json
+# yarn.lock
+
+# ==========================================
+# 🧩 Test Coverage
+# ==========================================
+coverage/
+test-results/
+
+# ==========================================
+# 🧠 Miscellaneous
+# ==========================================
+*.bak
+*.tmp
+*.old
+*.orig
+*.rej

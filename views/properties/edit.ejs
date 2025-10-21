@@ -1,0 +1,92 @@
+<%- include('../partials/header', { title: 'Edit Property' }) %>
+</head>
+<body class="bg-light">
+  <%- include('../partials/nav', { currentUserId, currentUserRole }) %>
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-xl-7">
+        <div class="card shadow border-0">
+          <div class="card-body p-4">
+            <h2 class="h3 mb-4 text-primary fw-bold">Edit Property</h2>
+            <form method="POST" action="/properties/<%= property._id %>/edit?_method=PUT" enctype="multipart/form-data">
+              
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input name="title" value="<%= property.title %>" placeholder="Title" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" placeholder="Description" class="form-control" required><%= property.description %></textarea>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Price</label>
+                  <input name="price" value="<%= property.price %>" placeholder="Price" type="number" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Rent Type</label>
+                  <select name="rentType" class="form-select">
+                    <option value="perMonth" <%= property.rentType === 'perMonth' ? 'selected' : '' %>>Per Month</option>
+                    <option value="perNight" <%= property.rentType === 'perNight' ? 'selected' : '' %>>Per Night</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Category</label>
+                <input name="category" value="<%= property.category %>" class="form-control" required>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Bedrooms</label>
+                  <input name="bedrooms" value="<%= property.bedrooms %>" placeholder="Bedrooms" type="number" min="1" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Bathrooms</label>
+                  <input name="bathrooms" value="<%= property.bathrooms %>" placeholder="Bathrooms" type="number" min="1" class="form-control">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Amenities (comma separated)</label>
+                <input name="amenities" value="<%= property.amenities ? property.amenities.join(', ') : '' %>" placeholder="Amenities" class="form-control">
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">City</label>
+                  <input name="city" value="<%= property.location.city %>" placeholder="City" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">State</label>
+                  <input name="state" value="<%= property.location.state %>" placeholder="State" class="form-control">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input name="address" value="<%= property.location.address %>" placeholder="Address (street, area, etc.)" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Complete Location</label>
+                <input name="fullLocation" value="<%= property.location.fullLocation %>" placeholder="Complete Location (e.g. House #, Street, Area, City, State)" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Images</label>
+                <input type="file" name="images" multiple class="form-control">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Documents</label>
+                <input type="file" name="documents" multiple class="form-control">
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" name="featured" id="featured" class="form-check-input" <%= property.featured ? 'checked' : '' %>>
+                <label for="featured" class="form-check-label">Featured</label>
+              </div>
+              <button class="btn btn-primary w-100">Update</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+            

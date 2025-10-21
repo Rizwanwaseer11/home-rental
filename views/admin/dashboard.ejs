@@ -1,0 +1,78 @@
+<%- include('../partials/header') %>
+<body class="bg-light">
+  <!-- Unified, role-aware navbar -->
+  <%- include('../partials/nav') %>
+ 
+  <main class="container py-5">
+    <h1 class="mb-4 text-center text-primary">Admin Dashboard</h1>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Pending Properties</h5>
+            <% if (pendingProperties.length === 0) { %>
+              <div class="text-muted">No pending properties.</div>
+            <% } else { %>
+              <% pendingProperties.forEach(p => { %>
+                <div class="border-bottom py-2">
+                  <div class="fw-bold"><%= p.title %></div>
+                  <div class="small text-muted mb-1"><%= p.location.city %> &bull; <%= p.category %></div>
+                  <form method="POST" action="/admin/properties/<%= p._id %>/approve" class="d-inline">
+                    
+                    <button class="btn btn-success btn-sm">Approve</button>
+                  </form>
+                  <form method="POST" action="/admin/properties/<%= p._id %>/reject" class="d-inline ms-2">
+                    
+                    <button class="btn btn-danger btn-sm">Reject</button>
+                  </form>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Users</h5>
+            <div class="overflow-auto" style="max-height: 300px;">
+              <% users.forEach(u => { %>
+                <div class="border-bottom py-2 d-flex align-items-center gap-2">
+                  <% if (u.profilePic) { %>
+                    <img src="<%= u.profilePic %>" class="rounded-circle border" style="width:32px;height:32px;object-fit:cover;" alt="profile">
+                  <% } else { %>
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center text-white" style="width:32px;height:32px;">?</div>
+                  <% } %>
+                  <div>
+                    <div class="fw-semibold"><%= u.name %></div>
+                    <div class="small text-muted"><%= u.email %></div>
+                    <% if (u.phone) { %><div class="small text-muted">Phone: <%= u.phone %></div><% } %>
+                    <div class="small text-secondary">Role: <%= u.role %></div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Bookings</h5>
+            <div class="overflow-auto" style="max-height: 300px;">
+              <% bookings.forEach(b => { %>
+                <div class="border-bottom py-2">
+                  <div class="fw-semibold"><%= b.propertyId?.title || 'N/A' %></div>
+                  <div class="small text-muted">By: <%= b.userId?.name || 'N/A' %> (<%= b.userId?.email || '' %>)</div>
+                  <div class="small text-secondary">Status: <%= b.status %></div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+</body>
+</html>

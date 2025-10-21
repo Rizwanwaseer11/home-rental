@@ -1,0 +1,96 @@
+<%- include ('../partials/header') %>
+</head>
+<body>
+  <%- include ('../partials/nav') %>
+
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-xl-7">
+        <div class="card shadow border-0">
+          <div class="card-body p-4">
+            <h2 class="h3 mb-4 text-primary fw-bold">Add Property</h2>
+            <form method="POST" action="/properties/add" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input name="title" placeholder="Title" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" placeholder="Description" class="form-control" required></textarea>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Price</label>
+                  <input name="price" placeholder="Price" type="number" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Rent Type</label>
+                  <select name="rentType" class="form-select">
+                    <option value="perMonth">Per Month</option>
+                    <option value="perNight">Per Night</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Category</label>
+                <select name="category" class="form-select">
+                  <option>House</option>
+                  <option>Apartment</option>
+                  <option>Villa</option>
+                </select>
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Bedrooms</label>
+                  <input name="bedrooms" placeholder="Bedrooms" type="number" min="1" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Bathrooms</label>
+                  <input name="bathrooms" placeholder="Bathrooms" type="number" min="1" class="form-control">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Amenities <span class="text-muted small">(comma separated)</span></label>
+                <input name="amenities" placeholder="Amenities (comma separated)" class="form-control">
+              </div>
+              <div class="row g-2 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">City</label>
+                  <input name="city" placeholder="City" class="form-control">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">State</label>
+                  <input name="state" placeholder="State" class="form-control">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input name="address" placeholder="Address (street, area, etc.)" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Complete Location</label>
+                <input name="fullLocation" placeholder="Complete Location (e.g. House #, Street, Area, City, State)" class="form-control" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Images</label>
+                <input type="file" name="images" multiple class="form-control">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Documents</label>
+                <input type="file" name="documents" multiple class="form-control">
+              </div>
+              <div class="form-check mb-3">
+                <input type="checkbox" name="featured" id="featured" class="form-check-input">
+                <label for="featured" class="form-check-label">Featured</label>
+              </div>
+              <button class="btn btn-primary w-100">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+</body>
+</html>
+

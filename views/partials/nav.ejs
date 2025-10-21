@@ -1,0 +1,67 @@
+<%- include('header') %>
+</head>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow sticky-top">
+  <div class="container">
+    <a href="/" class="navbar-brand fw-bold fs-3">HomeRental</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a href="/" class="nav-link">Properties</a></li>
+        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
+        <% if (currentUserRole === 'owner') { %>
+          <li class="nav-item"><a href="/properties/add" class="nav-link">Add Property</a></li>
+          <li class="nav-item"><a href="/orders" class="nav-link">Orders</a></li>
+        <% } %>
+        <% if (currentUserRole === 'renter') { %>
+          <li class="nav-item"><a href="/cart" class="nav-link">Cart</a></li>
+          <li class="nav-item"><a href="/orders/my" class="nav-link">My Orders</a></li>
+        <% } %>
+        <% if (currentUserRole === 'admin') { %>
+          <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
+        <% } %>
+      </ul>
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+       <% if (currentUserRole === 'owner' || currentUserRole === 'renter' || currentUserRole === 'admin') { %>
+  <li class="nav-item me-2">
+    <a href="/notifications" class="nav-link position-relative" title="Notifications">
+      <i class="bi bi-bell fs-5 text-warning"></i>
+      <% if (unreadCount > 0) { %>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <%= unreadCount %>
+        </span>
+      <% } %>
+    </a>
+  </li>
+<% } %>
+
+        <% if (!currentUserId) { %>
+          <li class="nav-item"><a href="/auth/login" class="nav-link">Login</a></li>
+          <li class="nav-item"><a href="/auth/signup" class="nav-link">Signup</a></li>
+        <% } else { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+  <% if (currentUser && currentUser.profilePic) { %>
+  <img src="<%= currentUser.profilePic %>" class="rounded-circle border border-warning me-2"
+       style="width:32px;height:32px;object-fit:cover;" alt="profile">
+<% } else { %>
+  <img src="/images/default-avatar.png" class="rounded-circle border border-warning me-2"
+       style="width:32px;height:32px;object-fit:cover;" alt="default">
+<% } %>
+
+
+
+              <span><%= currentUser ? currentUser.name : '' %></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="/profile/me">Profile</a></li>
+              <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+            </ul>
+          </li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>
+<script src="/bootstrap.bundle.min.js"></script>

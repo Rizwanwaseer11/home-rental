@@ -1,0 +1,56 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-light">
+  <!-- Unified, role-aware navbar -->
+  <%- include('../partials/nav') %>
+  <main class="container py-5">
+    <div class="card shadow mx-auto" style="max-width: 500px;">
+      <div class="card-body">
+        <h1 class="mb-4 text-center text-primary">My Profile</h1>
+        <div class="d-flex flex-column align-items-center mb-4">
+          <% if (user.profilePic) { %>
+            <img src="<%= user.profilePic %>" class="rounded-circle border mb-2" style="width:96px;height:96px;object-fit:cover;" alt="profile">
+          <% } else { %>
+            <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center text-white mb-2" style="width:96px;height:96px;font-size:2rem;">?</div>
+          <% } %>
+          <div class="fw-semibold fs-5"><%= user.name %></div>
+          <div class="text-muted small">Email: <%= user.email %></div>
+          <div class="text-muted small">Phone: <%= user.phone || 'N/A' %></div>
+          <div class="text-secondary small">Role: <%= user.role %></div>
+        </div>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-danger text-center"><%= error %></div>
+        <% } %>
+        <form method="POST" action="/profile/me/edit" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" name="name" value="<%= user.name %>" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" value="<%= user.email %>" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" name="phone" value="<%= user.phone || '' %>" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Profile Picture</label>
+            <% if (user.profilePic) { %>
+              <img src="<%= user.profilePic %>" class="rounded border mb-2" style="width:64px;height:64px;object-fit:cover;" alt="profile">
+            <% } %>
+            <input type="file" name="profilePic" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">New Password <span class="text-secondary small">(leave blank to keep current)</span></label>
+            <input type="password" name="password" class="form-control" autocomplete="new-password">
+          </div>
+          <button class="btn btn-primary w-100">Update Profile</button>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+

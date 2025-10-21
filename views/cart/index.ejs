@@ -1,0 +1,38 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-light">
+  <!-- Unified, role-aware navbar -->
+  <%- include('../partials/nav') %>
+  <main class="container py-5">
+    <h2 class="display-6 fw-bold text-primary mb-4">Your Cart</h2>
+    <% if (cartMessage) { %>
+      <div class="alert alert-warning text-center fw-semibold"><%= cartMessage %></div>
+    <% } %>
+    <% if (!cart || !cart.items.length) { %>
+      <div class="text-muted text-center py-5">No items in your cart.</div>
+    <% } else { %>
+      <div class="row g-4">
+        <% cart.items.forEach(i => { %>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+              <a href="/properties/<%= i.propertyId._id %>">
+                <img src="<%= i.propertyId.images[0] || '/placeholder.png' %>" alt="img" class="card-img-top" style="height:220px;object-fit:cover;">
+              </a>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title mb-1"><a href="/properties/<%= i.propertyId._id %>" class="text-decoration-none text-primary"><%= i.propertyId.title %></a></h5>
+                <p class="card-text text-muted mb-1"><%= i.propertyId.location.city %> &bull; <%= i.propertyId.category %></p>
+                <p class="fw-bold text-success mb-2">Rs <%= i.propertyId.price %></p>
+                <form method="POST" action="/cart/remove/<%= i.propertyId._id %>" class="mt-auto">
+                  
+                  <button class="btn btn-danger w-100">Remove</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+ 
+</body>
+</html>

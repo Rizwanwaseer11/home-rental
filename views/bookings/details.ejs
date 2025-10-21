@@ -1,0 +1,44 @@
+<%- include('../partials/header') %>
+</head>
+<body>
+ <%- include('../partials/nav') %>
+  <main class="container my-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-xl-7">
+        <div class="card shadow border-0">
+          <div class="card-body p-4">
+            <h2 class="h4 mb-4 text-primary fw-bold">Booking Details</h2>
+            <% if (booking && property) { %>
+              <div class="mb-3">
+                <div class="fw-semibold">Property:</div>
+                <a href="/properties/<%= property._id %>" class="text-decoration-none text-primary fw-bold"><%= property.title %></a>
+              </div>
+              <div class="mb-2">Status: <span class="fw-semibold"><%= booking.status %></span></div>
+              <div class="mb-2">Amount: Rs <%= booking.payment.amount %></div>
+              <div class="mb-2">Payment Method: <%= booking.payment.method %></div>
+              <div class="mb-2">Booked At: <%= booking.createdAt.toLocaleString() %></div>
+              <% if (currentUserRole === 'owner' && property.ownerId && String(property.ownerId) === String(currentUserId) && booking.status === 'pending') { %>
+                <form method="POST" action="/bookings/<%= booking._id %>/approve" class="mt-4">
+                  
+                  <button class="btn btn-success px-4">Approve Booking</button>
+                </form>
+              <% } %>
+              <% if (currentUserRole === 'renter' && booking.status === 'confirmed') { %>
+                <div class="mt-4 alert alert-success">Your booking has been approved!</div>
+              <% } %>
+              <% if (alreadyBooked) { %>
+                <div class="mt-4 alert alert-danger">You already have a booking for this house. You cannot book again until your previous booking is rejected or cancelled.</div>
+              <% } else if (currentUserRole === 'renter' && booking.status === 'pending') { %>
+                <div class="mt-4 alert alert-warning">Waiting for owner approval...</div>
+              <% } %>
+            <% } else { %>
+              <div class="alert alert-warning">Booking not found.</div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+</body>
+</html>

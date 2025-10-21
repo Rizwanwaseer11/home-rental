@@ -1,0 +1,64 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-light">
+  <%- include('../partials/nav') %>
+
+  <main class="container py-5">
+    <div class="card shadow p-4">
+      <h3 class="text-primary text-center mb-4">
+        <i class="bi bi-info-circle me-2"></i> Notification Details
+      </h3>
+
+      <p><strong>Message:</strong> <%= notification?.message || 'No message' %></p>
+      <p><strong>Date:</strong> <%= new Date(notification.createdAt).toLocaleString() %></p>
+      <hr>
+
+      <% if (isOwner) { %>
+        <h5 class="text-success mb-3">Property Details</h5>
+        <p><strong>Title:</strong> <%= property?.title || 'N/A' %></p>
+        <p><strong>Price:</strong> $<%= property?.price || 'N/A' %></p>
+        <p><strong>Location:</strong> <%= property?.location || 'N/A' %></p>
+        <hr>
+
+        <h5 class="text-primary mb-3">Renter Details</h5>
+        <p><strong>Name:</strong> <%= renter?.name || 'N/A' %></p>
+        <p><strong>Email:</strong> <%= renter?.email || 'N/A' %></p>
+        <p><strong>Phone:</strong> <%= renter?.phone || 'N/A' %></p>
+        <hr>
+
+        <h5 class="text-danger mb-3">Booking Details</h5>
+        <p><strong>Status:</strong> <%= booking?.status || 'N/A' %></p>
+        <p><strong>From:</strong> <%= booking?.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A' %></p>
+        <p><strong>To:</strong> <%= booking?.endDate ? new Date(booking.endDate).toLocaleDateString() : 'N/A' %></p>
+
+      <% } else if (isRenter) { %>
+        <h5 class="text-success mb-3">Booking Details</h5>
+        <p><strong>Status:</strong> <%= booking?.status || 'N/A' %></p>
+        <p><strong>From:</strong> <%= booking?.startDate ? new Date(booking.startDate).toLocaleDateString() : 'N/A' %></p>
+        <p><strong>To:</strong> <%= booking?.endDate ? new Date(booking.endDate).toLocaleDateString() : 'N/A' %></p>
+        <hr>
+
+        <h5 class="text-primary mb-3">Property Details</h5>
+        <p><strong>Title:</strong> <%= property?.title || 'N/A' %></p>
+        <p><strong>Price:</strong> $<%= property?.price || 'N/A' %></p>
+        <p><strong>Location:</strong> <%= property?.location || 'N/A' %></p>
+        <hr>
+
+        <h5 class="text-warning mb-3">Owner Details</h5>
+        <p><strong>Name:</strong> <%= owner?.name || 'N/A' %></p>
+        <p><strong>Email:</strong> <%= owner?.email || 'N/A' %></p>
+        <p><strong>Phone:</strong> <%= owner?.phone || 'N/A' %></p>
+
+      <% } else { %>
+        <p class="text-muted text-center">You are not authorized to view this notification.</p>
+      <% } %>
+
+      <div class="text-center mt-4">
+        <a href="/notifications" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Back
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

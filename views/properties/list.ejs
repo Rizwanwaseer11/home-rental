@@ -1,0 +1,160 @@
+<%- include('../partials/header') %>
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+<%- include('../partials/nav') %>
+
+<div class="container mt-4">
+
+  <% if (currentUserRole === 'owner') { %>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h4 class="mb-0"><%= viewAll ? "All Properties" : "My Properties" %></h4>
+      <% if (!viewAll) { %>
+        <a href="/properties?viewAll=true" class="btn btn-outline-primary btn-sm">View All Properties</a>
+      <% } else { %>
+        <a href="/properties" class="btn btn-outline-secondary btn-sm">View My Properties</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <h4 class="mb-3">Explore Properties</h4>
+  <% } %>
+
+  <!-- 🔍 Filters -->
+  <form method="GET" action="/properties" class="row gy-2 gx-3 align-items-center bg-white p-3 rounded-3 shadow-sm">
+    <div class="col-12 col-md-3">
+      <input type="text" name="q" value="<%= q %>" class="form-control form-control-sm" placeholder="Search title or keyword">
+    </div>
+    <div class="col-6 col-md-2">
+      <input type="text" name="city" value="<%= city %>" class="form-control form-control-sm" placeholder="City">
+    </div>
+    <div class="col-6 col-md-2">
+      <select name="category" class="form-select form-select-sm">
+        <option value="">All Types</option>
+        <option value="House" <%= category === 'House' ? 'selected' : '' %>>House</option>
+        <option value="Apartment" <%= category === 'Apartment' ? 'selected' : '' %>>Apartment</option>
+        <option value="Villa" <%= category === 'Villa' ? 'selected' : '' %>>Villa</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <input type="number" name="minPrice" value="<%= minPrice %>" class="form-control form-control-sm" placeholder="Min Price">
+    </div>
+    <div class="col-6 col-md-2">
+      <input type="number" name="maxPrice" value="<%= maxPrice %>" class="form-control form-control-sm" placeholder="Max Price">
+    </div>
+    <div class="col-12 col-md-1 d-grid">
+      <button type="submit" class="btn btn-sm btn-primary w-100">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </form>
+
+  <!-- 🏘 Properties Section -->
+  <div class="row g-3 mt-3">
+    <% if (properties.length === 0) { %>
+      <div class="col-12 text-center text-muted py-5">
+        <i class="bi bi-house-slash display-4 mb-3"></i><br>
+        No properties found
+      </div>
+    <% } else { %>
+      <% properties.forEach(p => { %>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden position-relative hover-shadow">
+            
+            <!-- Status Badge -->
+            <% if (p.status === 'rented') { %>
+              <span class="position-absolute top-0 end-0 m-2 badge bg-success">Rented</span>
+            <% } else if (p.status === 'available') { %>
+              <span class="position-absolute top-0 end-0 m-2 badge bg-primary">Available</span>
+            <% } else if (p.status === 'pending' && currentUserRole === 'owner') { %>
+              <span class="position-absolute top-0 end-0 m-2 badge bg-warning text-dark">Pending</span>
+            <% } %>
+
+            <!-- Property Image -->
+            <a href="/properties/<%= p._id %>" class="text-decoration-none">
+              <img src="<%= p.images[0] || '/placeholder.png' %>" 
+                   alt="<%= p.title %>" 
+                   class="card-img-top" 
+                   style="height: 180px; object-fit: cover;">
+            </a>
+
+            <!-- Card Body -->
+            <div class="card-body d-flex flex-column p-3">
+              <h6 class="card-title text-truncate mb-1">
+                <a href="/properties/<%= p._id %>" class="text-decoration-none text-dark fw-semibold">
+                  <%= p.title %>
+                </a>
+              </h6>
+              <p class="small text-muted mb-2">
+                <i class="bi bi-geo-alt me-1"></i>
+                <%= p.location.city %>, <%= p.location.state || '' %>
+              </p>
+
+              <% if (p.description) { %>
+                <p class="small text-muted flex-grow-1">
+                  <%= p.description.substring(0, 60) %>...
+                </p>
+              <% } %>
+
+              <!-- Amenities -->
+              <div class="mb-2">
+                <% if (p.amenities && p.amenities.length) { %>
+                  <% p.amenities.slice(0, 2).forEach(a => { %>
+                    <span class="badge bg-light text-dark border me-1 mb-1"><%= a %></span>
+                  <% }) %>
+                  <% if (p.amenities.length > 2) { %>
+                    <span class="badge bg-secondary text-light">+<%= p.amenities.length - 2 %></span>
+                  <% } %>
+                <% } %>
+              </div>
+
+              <!-- Price -->
+              <p class="fw-bold text-success mb-2">
+                Rs <%= p.price.toLocaleString() %>
+                <small class="text-muted"> / <%= p.rentType === 'perNight' ? 'night' : 'month' %></small>
+              </p>
+
+              <!-- Footer Info -->
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted">
+                  🛏 <%= p.bedrooms %> &nbsp; | &nbsp; 🛁 <%= p.bathrooms %>
+                </small>
+                <% if (p.featured) { %>
+                  <span class="badge bg-warning text-dark">★</span>
+                <% } %>
+              </div>
+
+              <!-- Read More Button -->
+              <a href="/properties/<%= p._id %>" class="btn btn-outline-primary btn-sm mt-3 w-100">
+                Read More
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+  </div>
+
+  <!-- 📄 Pagination -->
+  <% if (total > limit) { %>
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination justify-content-center flex-wrap">
+        <% const totalPages = Math.ceil(total / limit); %>
+        <% for (let i = 1; i <= totalPages; i++) { %>
+          <li class="page-item <%= i === page ? 'active' : '' %>">
+            <a class="page-link" href="?page=<%= i %>
+              <% if (q) { %>&q=<%= q %><% } %>
+              <% if (city) { %>&city=<%= city %><% } %>
+              <% if (category) { %>&category=<%= category %><% } %>
+              <% if (minPrice) { %>&minPrice=<%= minPrice %><% } %>
+              <% if (maxPrice) { %>&maxPrice=<%= maxPrice %><% } %>
+              <% if (viewAll) { %>&viewAll=<%= viewAll %><% } %>">
+              <%= i %>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+    </nav>
+  <% } %>
+</div>
+
+</body>
+</html>

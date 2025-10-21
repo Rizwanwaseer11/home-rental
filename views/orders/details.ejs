@@ -1,0 +1,63 @@
+  <%- include('../partials/header') %>
+  </head>
+  <body>
+    <%- include('../partials/nav') %>
+  
+  <h2 class="text-2xl font-bold mb-4">Order Details</h2>
+
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-7">
+      <div class="card shadow border-0">
+        <div class="card-body p-4">
+          <h2 class="h4 mb-4 text-primary fw-bold">Order Details</h2>
+          <% if (booking && booking.propertyId) { %>
+            <div class="mb-4">
+              <div class="fw-semibold">Property:</div>
+              <div class="fs-5 fw-bold mb-1"><%= booking.propertyId.title %></div>
+              <div class="text-muted mb-2"><%= booking.propertyId.location.city %>, <%= booking.propertyId.location.state %></div>
+              <img src="<%= booking.propertyId.images && booking.propertyId.images[0] ? booking.propertyId.images[0] : '/placeholder.png' %>" class="img-fluid rounded shadow mb-2" style="max-width:350px;" alt="property">
+              <div class="mb-2"><%= booking.propertyId.description %></div>
+              <div class="small text-muted">Bedrooms: <%= booking.propertyId.bedrooms %> | Bathrooms: <%= booking.propertyId.bathrooms %></div>
+              <div class="small text-muted">Status: <%= booking.status %></div>
+              <div class="small text-muted">Amount: Rs <%= booking.payment.amount %></div>
+              <div class="small text-muted">Booked At: <%= booking.createdAt.toLocaleString() %></div>
+            </div>
+            <% if (isOwner) { %>
+              <div class="mb-4 p-3 bg-primary bg-opacity-10 rounded">
+                <div class="fw-semibold mb-2">Renter Details</div>
+                <div>Name: <%= booking.renterId.name %></div>
+                <div>Email: <%= booking.renterId.email %></div>
+                <% if (booking.renterId.phone) { %>
+                  <div>Phone: <%= booking.renterId.phone %></div>
+                <% } %>
+                <% if (booking.renterId.profilePic) { %>
+                  <img src="<%= booking.renterId.profilePic %>" class="rounded-circle border mt-2" style="width:48px;height:48px;object-fit:cover;" alt="renter profile">
+                <% } %>
+              </div>
+            <% } %>
+            <% if (isRenter) { %>
+              <div class="mb-4 p-3 bg-success bg-opacity-10 rounded">
+                <div class="fw-semibold mb-2">Owner Details</div>
+                <div>Name: <%= booking.propertyId.ownerId.name %></div>
+                <div>Email: <%= booking.propertyId.ownerId.email %></div>
+                <% if (booking.propertyId.ownerId.phone) { %>
+                  <div>Phone: <%= booking.propertyId.ownerId.phone %></div>
+                <% } %>
+                <% if (booking.propertyId.ownerId.profilePic) { %>
+                  <img src="<%= booking.propertyId.ownerId.profilePic %>" class="rounded-circle border mt-2" style="width:48px;height:48px;object-fit:cover;" alt="owner profile">
+                <% } %>
+              </div>
+            <% } %>
+          <% } else { %>
+            <div class="alert alert-warning">Order not found.</div>
+          <% } %>
+          <a href="<%= isOwner ? '/orders' : '/orders/my' %>" class="btn btn-secondary mt-3">Back to Orders</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
