@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
@@ -79,7 +80,9 @@ app.use(session({
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
     collectionName: "sessions",
+    
   }),
+ 
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
