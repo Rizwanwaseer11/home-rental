@@ -3,8 +3,9 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-const session = require("express-session");
 const MongoStore = require("connect-mongo");
+const session = require("express-session");
+
 const methodOverride = require("method-override");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -78,23 +79,23 @@ if (!process.env.MONGO_URI) {
 }
 
 // 1. Session middleware (must be first)
-// app.use(session({
-//   secret: process.env.SESSION_SECRET || "keyboardcat",
-//   resave: false,
-//   saveUninitialized: false,
-//   store: MongoStore.create({
-//     mongoUrl: process.env.MONGO_URI,
-//     collectionName: "sessions",
+app.use(session({
+  secret: process.env.SESSION_SECRET || "keyboardcat",
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: "sessions",
     
-//   }),
+  }),
  
-//   cookie: {
-//     httpOnly: true,
-//     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-//     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allow cross-site cookies
-//     maxAge: 1000 * 60 * 60 * 24 // 1 day
-//   }
-// }));
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allow cross-site cookies
+    maxAge: 1000 * 60 * 60 * 24 // 1 day
+  }
+}));
 
 
 //// ---------------------------------------------
@@ -167,31 +168,19 @@ app.get("/about", (req, res) => {
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
 
-    const store = MongoStore.create({
-      client: mongoose.connection.getClient(),
-      collectionName: "sessions",
-    });
+    // Run auto-approval every 10 minutes
+    setInterval(() => {
+      autoApprovePendingProperties().catch(console.error);
+    }, 10 * 60 * 1000);
 
-    app.use(session({
-      secret: process.env.SESSION_SECRET || "keyboardcat",
-      resave: false,
-      saveUninitialized: false,
-      store,
-      cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 1000 * 60 * 60 * 24
-      }
-    }));
-
-    // Start server only after DB + session store ready
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    app.listen(PORT, () =>
+      console.log(`Server running at http://localhost:${PORT}`)
+    );
   })
   .catch(err => {
-    console.error("❌ MongoDB connection error:", err);
-    process.exit(1);
+    console.error("MongoDB error:", err);
+    process.exit(1); // stop server if DB connection fails
   });
