@@ -137,7 +137,7 @@ router.post(
 
       req.session.userId = user._id;
       req.session.role = user.role;
-      res.redirect("/");
+      res.redirect("/properties");
     } catch (err) {
       console.error(err);
       res.status(500).send("Server error");
