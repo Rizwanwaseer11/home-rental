@@ -13,60 +13,63 @@ const sendEmail = require("../utils/mailer"); // ✅ using your existing mailer 
 router.post("/:id/remove", isAuthenticated, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id)
-      .populate("propertyId")
       .populate({
         path: "propertyId",
-        populate: { path: "ownerId" }
+        populate: { path: "ownerId", select: "name email" },
       });
 
     if (!booking) return res.status(404).send("Booking not found");
 
-    // Only renter can cancel
     if (String(booking.renterId) !== String(req.session.userId))
       return res.status(403).send("Not allowed");
 
     if (booking.status !== "pending")
       return res.status(403).send("Cannot cancel accepted or rejected orders");
 
-    // Update status
     booking.status = "cancelled";
     await booking.save();
 
     const property = booking.propertyId;
     const owner = property.ownerId;
 
-    // ✅ Send notification to property owner
+    // ✅ Create owner notification
     await Notification.create({
       receiverId: owner._id,
       propertyId: property._id,
-      message: `Booking for ${property.title} has been cancelled by the renter.`
+      message: `Booking for ${property.title} has been cancelled by the renter.`,
     });
 
     // ✅ Send email to owner
     try {
-      await sendEmail(
-        owner.email,
-        "Booking Cancelled by Renter",
-        `
-        <h2>Hello ${owner.name},</h2>
-        <p>The renter has <b>cancelled</b> a booking for your property <b>${property.title}</b>.</p>
-        <p><b>Property ID:</b> ${property._id}</p>
-        <p><b>Booking ID:</b> ${booking._id}</p>
-        <p><b>Owner:</b> ${owner.name}</p>
-        <p>Please check your dashboard for more details.</p>
-        <p>— Home Rental System</p>
-        `
-      );
-      console.log(`📧 Email sent to ${owner.email} (booking cancelled)`);
+      if (!owner?.email) {
+        console.error("❌ Owner email missing — cannot send cancellation email.");
+      } else {
+        console.log("📧 Sending cancellation email to:", owner.email);
+
+        await sendEmail(
+          owner.email,
+          "Booking Cancelled by Renter",
+          `
+            <h2>Hello ${owner.name},</h2>
+            <p>The renter has <b>cancelled</b> a booking for your property <b>${property.title}</b>.</p>
+            <p><b>Property ID:</b> ${property._id}</p>
+            <p><b>Booking ID:</b> ${booking._id}</p>
+            <p>Please check your dashboard for more details.</p>
+            <p>— Home Rental System</p>
+          `
+        );
+
+        console.log("✅ Cancellation email sent successfully to:", owner.email);
+      }
     } catch (emailErr) {
-      console.error("Email sending failed:", emailErr);
+      console.error("❌ Email sending failed:", emailErr);
     }
 
-    // ✅ (Optional) Notify renter in DB that cancellation was processed
+    // ✅ Notify renter as well
     await Notification.create({
       receiverId: booking.renterId,
       propertyId: property._id,
-      message: `Your booking cancellation for ${property.title} has been processed.`
+      message: `Your booking cancellation for ${property.title} has been processed.`,
     });
 
     res.redirect("/orders/my");
@@ -75,6 +78,7 @@ router.post("/:id/remove", isAuthenticated, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
 
 // Reject order (booking)
 // Reject order (booking)
