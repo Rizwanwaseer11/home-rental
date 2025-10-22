@@ -50,14 +50,14 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 router.post("/create/:propertyId", isAuthenticated, isRenter, async (req, res) => {
   try {
     const propertyId = req.params.propertyId;
-    const prop = await Property.findById(propertyId).populate("ownerId");
+    const prop = await Property.findById(propertyId).populate("ownerId", "name email");
+
     if (!prop || prop.status !== "available") {
       return res.status(400).send("Property not available");
     }
 
     const ownerId = String(prop.ownerId._id);
 
-    // Check if renter already has a booking
     const existingBooking = await Booking.findOne({
       renterId: req.session.userId,
       propertyId,
@@ -74,7 +74,6 @@ router.post("/create/:propertyId", isAuthenticated, isRenter, async (req, res) =
       });
     }
 
-    // Create new booking
     const booking = new Booking({
       renterId: req.session.userId,
       propertyId,
@@ -89,7 +88,6 @@ router.post("/create/:propertyId", isAuthenticated, isRenter, async (req, res) =
 
     await booking.save();
 
-    // ✅ Notify property owner in DB
     await Notification.create({
       receiverId: prop.ownerId,
       propertyId: prop._id,
@@ -97,21 +95,25 @@ router.post("/create/:propertyId", isAuthenticated, isRenter, async (req, res) =
       message: `New booking request for your property: ${prop.title}`,
     });
 
-    // ✅ Send email to Owner
+    // ✅ Send email
     try {
+      console.log("Sending email to owner:", prop.ownerId.email);
+
       await sendEmail(
         prop.ownerId.email,
         "New Booking Request Received",
         `
-        <h2>Hello ${prop.ownerId.name},</h2>
-        <p>You have received a new booking request for your property: <b>${prop.title}</b>.</p>
-        <p><b>Booking ID:</b> ${booking._id}</p>
-        <p>Visit your dashboard to review and approve or reject the booking.</p>
-        <p>— Home Rental System</p>
+          <h2>Hello ${prop.ownerId.name},</h2>
+          <p>You have received a new booking request for your property: <b>${prop.title}</b>.</p>
+          <p><b>Booking ID:</b> ${booking._id}</p>
+          <p>Visit your dashboard to review and approve or reject the booking.</p>
+          <p>— Home Rental System</p>
         `
       );
+
+      console.log("✅ Email sent to owner successfully");
     } catch (emailErr) {
-      console.error("Email to owner failed:", emailErr);
+      console.error("❌ Email to owner failed:", emailErr);
     }
 
     res.redirect("/bookings/" + booking._id);
@@ -120,6 +122,7 @@ router.post("/create/:propertyId", isAuthenticated, isRenter, async (req, res) =
     res.status(500).send("Server error");
   }
 });
+
 
 // ---------------------------------------------------------------------------
 // POST: Owner approves booking
