@@ -63,36 +63,48 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(methodOverride("_method"));
 
-// Rate limiting
+// ✅ Limit requests to prevent abuse
+// ------------------------------
+// Rate Limiting
+// ------------------------------
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 300 // limit each IP to 100 requests per windowMs
+  max: 300, // limit each IP to 300 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 app.use(limiter);
 
-// session configuration for login through https:
-app.set('trust proxy', 1);
+// ------------------------------
+// Session Configuration
+// ------------------------------
+const isProduction = process.env.NODE_ENV === "production";
 
+// ✅ Trust proxy is REQUIRED for Railway / Render / Vercel / Cloudflare setups
+app.set("trust proxy", 1);
 
-// 1. Session middleware (must be first)
-app.use(session({
-  secret: process.env.SESSION_SECRET || "keyboardcat",
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URI,
-    collectionName: "sessions",
-    
-  }),
- 
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // allow cross-site cookies
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
-  }
-}));
+// ✅ Express session setup (works both locally & in production)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "keyboardcat",
+    resave: false,
+    saveUninitialized: false, // don’t save empty sessions
 
+    // ✅ MongoDB session store
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
+
+    // ✅ Cookie configuration (cross-environment stability)
+    cookie: {
+      httpOnly: true, // prevents JS access to cookie
+      secure: isProduction, // true only in production (HTTPS)
+      sameSite: isProduction ? "none" : "lax", // "none" for Railway HTTPS, "lax" for localhost
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  })
+);
 
 //// ---------------------------------------------
 // 🔹 Global Middleware: Pass User + Notifications to All Views

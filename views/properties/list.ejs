@@ -7,19 +7,19 @@
 
   <% if (currentUserRole === 'owner') { %>
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h4 class="mb-0"><%= viewAll ? "All Properties" : "My Properties" %></h4>
+      <h4 class="fw-bold mb-0 text-gradient"><%= viewAll ? "All Properties" : "My Properties" %></h4>
       <% if (!viewAll) { %>
-        <a href="/properties?viewAll=true" class="btn btn-outline-primary btn-sm">View All Properties</a>
+        <a href="/properties?viewAll=true" class="btn btn-outline-primary btn-sm rounded-pill shadow-sm">View All Properties</a>
       <% } else { %>
-        <a href="/properties" class="btn btn-outline-secondary btn-sm">View My Properties</a>
+        <a href="/properties" class="btn btn-outline-secondary btn-sm rounded-pill shadow-sm">View My Properties</a>
       <% } %>
     </div>
   <% } else { %>
-    <h4 class="mb-3">Explore Properties</h4>
+    <h4 class="fw-bold mb-3 text-gradient">Explore Properties</h4>
   <% } %>
 
   <!-- 🔍 Filters -->
-  <form method="GET" action="/properties" class="row gy-2 gx-3 align-items-center bg-white p-3 rounded-3 shadow-sm">
+  <form method="GET" action="/properties" class="row gy-2 gx-3 align-items-center bg-white p-3 rounded-4 shadow-lg animate__animated animate__fadeIn">
     <div class="col-12 col-md-3">
       <input type="text" name="q" value="<%= q %>" class="form-control form-control-sm" placeholder="Search title or keyword">
     </div>
@@ -41,14 +41,14 @@
       <input type="number" name="maxPrice" value="<%= maxPrice %>" class="form-control form-control-sm" placeholder="Max Price">
     </div>
     <div class="col-12 col-md-1 d-grid">
-      <button type="submit" class="btn btn-sm btn-primary w-100">
+      <button type="submit" class="btn btn-primary btn-sm w-100 rounded-pill shadow-sm">
         <i class="bi bi-search"></i>
       </button>
     </div>
   </form>
 
   <!-- 🏘 Properties Section -->
-  <div class="row g-3 mt-3">
+  <div class="row g-4 mt-4">
     <% if (properties.length === 0) { %>
       <div class="col-12 text-center text-muted py-5">
         <i class="bi bi-house-slash display-4 mb-3"></i><br>
@@ -56,35 +56,36 @@
       </div>
     <% } else { %>
       <% properties.forEach(p => { %>
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 rounded-3 overflow-hidden position-relative hover-shadow">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+          <div class="property-card card border-0 rounded-4 shadow-sm position-relative overflow-hidden animate__animated animate__fadeInUp flex-fill">
             
             <!-- Status Badge -->
             <% if (p.status === 'rented') { %>
-              <span class="position-absolute top-0 end-0 m-2 badge bg-success">Rented</span>
+              <span class="status-badge bg-success text-white shadow-sm">Rented</span>
             <% } else if (p.status === 'available') { %>
-              <span class="position-absolute top-0 end-0 m-2 badge bg-primary">Available</span>
+              <span class="status-badge bg-primary text-white shadow-sm">Available</span>
             <% } else if (p.status === 'pending' && currentUserRole === 'owner') { %>
-              <span class="position-absolute top-0 end-0 m-2 badge bg-warning text-dark">Pending</span>
+              <span class="status-badge bg-warning text-dark shadow-sm">Pending</span>
             <% } %>
 
             <!-- Property Image -->
             <a href="/properties/<%= p._id %>" class="text-decoration-none">
-              <img src="<%= p.images[0] || '/placeholder.png' %>" 
-                   alt="<%= p.title %>" 
-                   class="card-img-top" 
-                   style="height: 180px; object-fit: cover;">
+              <div class="image-wrapper">
+                <img src="<%= p.images[0] || '/placeholder.png' %>" 
+                     alt="<%= p.title %>" 
+                     class="property-img">
+              </div>
             </a>
 
             <!-- Card Body -->
             <div class="card-body d-flex flex-column p-3">
               <h6 class="card-title text-truncate mb-1">
-                <a href="/properties/<%= p._id %>" class="text-decoration-none text-dark fw-semibold">
+                <a href="/properties/<%= p._id %>" class="text-decoration-none text-dark fw-bold hover-text fs-6">
                   <%= p.title %>
                 </a>
               </h6>
               <p class="small text-muted mb-2">
-                <i class="bi bi-geo-alt me-1"></i>
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
                 <%= p.location.city %>, <%= p.location.state || '' %>
               </p>
 
@@ -92,6 +93,8 @@
                 <p class="small text-muted flex-grow-1">
                   <%= p.description.substring(0, 60) %>...
                 </p>
+              <% } else { %>
+                <div class="flex-grow-1"></div>
               <% } %>
 
               <!-- Amenities -->
@@ -101,13 +104,15 @@
                     <span class="badge bg-light text-dark border me-1 mb-1"><%= a %></span>
                   <% }) %>
                   <% if (p.amenities.length > 2) { %>
-                    <span class="badge bg-secondary text-light">+<%= p.amenities.length - 2 %></span>
+                    <span class="badge bg-gradient text-light" style="background: linear-gradient(90deg,#6f42c1,#6610f2);">
+                      +<%= p.amenities.length - 2 %>
+                    </span>
                   <% } %>
                 <% } %>
               </div>
 
               <!-- Price -->
-              <p class="fw-bold text-success mb-2">
+              <p class="fw-bold text-success mb-2 fs-6">
                 Rs <%= p.price.toLocaleString() %>
                 <small class="text-muted"> / <%= p.rentType === 'perNight' ? 'night' : 'month' %></small>
               </p>
@@ -118,13 +123,13 @@
                   🛏 <%= p.bedrooms %> &nbsp; | &nbsp; 🛁 <%= p.bathrooms %>
                 </small>
                 <% if (p.featured) { %>
-                  <span class="badge bg-warning text-dark">★</span>
+                  <span class="badge bg-warning text-dark shadow-sm">★</span>
                 <% } %>
               </div>
 
               <!-- Read More Button -->
-              <a href="/properties/<%= p._id %>" class="btn btn-outline-primary btn-sm mt-3 w-100">
-                Read More
+              <a href="/properties/<%= p._id %>" class="btn btn-gradient btn-sm mt-3 w-100 rounded-pill">
+                <i class="bi bi-info-circle me-1"></i> Read More
               </a>
             </div>
           </div>
@@ -155,6 +160,78 @@
     </nav>
   <% } %>
 </div>
+
+<style>
+  /* ✨ Animated Styling */
+  .property-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .property-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  .image-wrapper {
+    overflow: hidden;
+    height: 180px;
+  }
+  .property-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+  .property-card:hover .property-img {
+    transform: scale(1.12);
+  }
+  .status-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  .btn-gradient {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    margin-top: auto;
+  }
+  .btn-gradient:hover {
+    background: linear-gradient(90deg, #6610f2, #0d6efd);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+  }
+  .hover-text:hover {
+    color: #6610f2;
+    text-shadow: 0 0 6px rgba(102,16,242,0.3);
+  }
+  .text-gradient {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Responsive fix for equal height columns */
+  @media (max-width: 767px) {
+    .col-sm-6, .col-md-4, .col-lg-3 {
+      display: flex;
+    }
+  }
+</style>
 
 </body>
 </html>

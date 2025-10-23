@@ -1,67 +1,167 @@
 <%- include('header') %>
 </head>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow sticky-top">
-  <div class="container">
-    <a href="/" class="navbar-brand fw-bold fs-3">HomeRental</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a href="/" class="nav-link">Properties</a></li>
-        <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
-        <% if (currentUserRole === 'owner') { %>
-          <li class="nav-item"><a href="/properties/add" class="nav-link">Add Property</a></li>
-          <li class="nav-item"><a href="/orders" class="nav-link">Orders</a></li>
-        <% } %>
-        <% if (currentUserRole === 'renter') { %>
-          <li class="nav-item"><a href="/cart" class="nav-link">Cart</a></li>
-          <li class="nav-item"><a href="/orders/my" class="nav-link">My Orders</a></li>
-        <% } %>
-        <% if (currentUserRole === 'admin') { %>
-          <li class="nav-item"><a href="/admin" class="nav-link">Admin</a></li>
-        <% } %>
-      </ul>
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-       <% if (currentUserRole === 'owner' || currentUserRole === 'renter' || currentUserRole === 'admin') { %>
-  <li class="nav-item me-2">
-    <a href="/notifications" class="nav-link position-relative" title="Notifications">
-      <i class="bi bi-bell fs-5 text-warning"></i>
-      <% if (unreadCount > 0) { %>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          <%= unreadCount %>
-        </span>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow animated-navbar">
+  <div class="container py-2 d-flex align-items-center justify-content-between">
+
+    <!-- Brand + Left Links -->
+    <div class="d-flex align-items-center">
+      <a href="/" class="navbar-brand fw-bold fs-3 text-white d-flex align-items-center fade-in me-4">
+        <i class="bi bi-house-door-fill me-2 text-warning"></i> HomeRental
+      </a>
+
+      <div class="collapse navbar-collapse fade-in" id="navbarNav">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item"><a href="/" class="nav-link fw-semibold nav-hover text-white">Properties</a></li>
+          <li class="nav-item"><a href="/about" class="nav-link fw-semibold nav-hover text-white">About</a></li>
+
+          <% if (currentUserRole === 'owner') { %>
+            <li class="nav-item"><a href="/properties/add" class="nav-link fw-semibold nav-hover text-white">Add Property</a></li>
+            <li class="nav-item"><a href="/orders" class="nav-link fw-semibold nav-hover text-white">Orders</a></li>
+          <% } %>
+
+          <% if (currentUserRole === 'renter') { %>
+            <li class="nav-item"><a href="/cart" class="nav-link fw-semibold nav-hover text-white">Cart</a></li>
+            <li class="nav-item"><a href="/orders/my" class="nav-link fw-semibold nav-hover text-white">My Orders</a></li>
+          <% } %>
+
+          <% if (currentUserRole === 'admin') { %>
+            <li class="nav-item"><a href="/admin" class="nav-link fw-semibold nav-hover text-white">Admin</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Right Side (Profile / Auth / Notifications) -->
+    <div class="d-flex align-items-center fade-in">
+      <% if (currentUserRole === 'owner' || currentUserRole === 'renter' || currentUserRole === 'admin') { %>
+        <a href="/notifications" class="nav-link position-relative me-3 text-white" title="Notifications">
+          <i class="bi bi-bell-fill fs-5 text-warning bell-anim"></i>
+          <% if (unreadCount > 0) { %>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger small">
+              <%= unreadCount %>
+            </span>
+          <% } %>
+        </a>
       <% } %>
-    </a>
-  </li>
-<% } %>
 
-        <% if (!currentUserId) { %>
-          <li class="nav-item"><a href="/auth/login" class="nav-link">Login</a></li>
-          <li class="nav-item"><a href="/auth/signup" class="nav-link">Signup</a></li>
-        <% } else { %>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-  <% if (currentUser && currentUser.profilePic) { %>
-  <img src="<%= currentUser.profilePic %>" class="rounded-circle border border-warning me-2"
-       style="width:32px;height:32px;object-fit:cover;" alt="profile">
-<% } else { %>
-  <img src="/images/default-avatar.png" class="rounded-circle border border-warning me-2"
-       style="width:32px;height:32px;object-fit:cover;" alt="default">
-<% } %>
+      <% if (!currentUserId) { %>
+        <a href="/auth/login" class="btn btn-outline-light btn-sm px-3 fw-semibold me-2 nav-btn">Login</a>
+        <a href="/auth/signup" class="btn btn-warning btn-sm px-3 fw-semibold nav-btn text-dark">Signup</a>
+      <% } else { %>
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center fw-semibold text-white nav-hover"
+             href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <% if (currentUser && currentUser.profilePic) { %>
+              <img src="<%= currentUser.profilePic %>" class="rounded-circle border border-light me-2"
+                   style="width:36px;height:36px;object-fit:cover;" alt="profile">
+            <% } else { %>
+              <img src="/images/default-avatar.png" class="rounded-circle border border-light me-2"
+                   style="width:36px;height:36px;object-fit:cover;" alt="default">
+            <% } %>
+            <span><%= currentUser ? currentUser.name : '' %></span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 fade-in">
+            <li><a class="dropdown-item py-2" href="/profile/me"><i class="bi bi-person me-2"></i> Profile</a></li>
+            <li><a class="dropdown-item py-2 text-danger" href="/auth/logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+          </ul>
+        </div>
+      <% } %>
 
-
-
-              <span><%= currentUser ? currentUser.name : '' %></span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-              <li><a class="dropdown-item" href="/profile/me">Profile</a></li>
-              <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
-            </ul>
-          </li>
-        <% } %>
-      </ul>
+      <!-- Mobile toggle -->
+      <button class="navbar-toggler border-0 ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </div>
 </nav>
+
+<style>
+  /* === Gradient + Animation Enhancements === */
+  .animated-navbar {
+    background: linear-gradient(90deg, #0052D4, #4364F7, #6FB1FC);
+    transition: all 0.4s ease-in-out;
+    height: 70px;
+    z-index: 1050;
+  }
+
+  .navbar.scrolled {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    background: linear-gradient(90deg, #0041b3, #2e54d4, #5e9ef7);
+  }
+
+  .fade-in {
+    animation: fadeIn 0.7s ease-in-out;
+  }
+
+  .nav-hover {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .nav-hover::after {
+    content: "";
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #ffc107;
+    transition: width 0.3s ease;
+  }
+
+  .nav-hover:hover::after {
+    width: 100%;
+  }
+
+  .nav-btn {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255,255,255,0.3);
+  }
+
+  .bell-anim {
+    transition: transform 0.2s ease;
+  }
+
+  .bell-anim:hover {
+    transform: rotate(-10deg) scale(1.1);
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(-10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  @media (max-width: 992px) {
+    .animated-navbar {
+      height: auto;
+      padding: 0.5rem 0;
+    }
+
+    .navbar-collapse {
+      background: linear-gradient(90deg, #0041b3, #2e54d4, #5e9ef7);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 0.5rem;
+    }
+
+    .nav-link {
+      color: #fff !important;
+    }
+  }
+</style>
+
+<script>
+  // Add scroll shadow
+  window.addEventListener('scroll', function() {
+    const nav = document.querySelector('.navbar');
+    if (window.scrollY > 20) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+</script>
+
 <script src="/bootstrap.bundle.min.js"></script>
