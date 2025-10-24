@@ -160,10 +160,13 @@ router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user)
-      return res
-        .status(404)
-        .render("auth/forgetpassword", { error: "No account found with that email." });
+
+    if (!user) {
+      return res.status(404).render("auth/forgetpassword", {
+        error: "No account found with that email.",
+        success: null,
+      });
+    }
 
     const token = crypto.randomBytes(32).toString("hex");
     user.resetToken = token;
@@ -185,12 +188,17 @@ router.post("/forgot-password", async (req, res) => {
 
     res.render("auth/forgetpassword", {
       success: "Password reset link has been sent to your email.",
+      error: null,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res.status(500).render("auth/forgetpassword", {
+      error: "Something went wrong, please try again later.",
+      success: null,
+    });
   }
 });
+
 
 // ======================= RESET PASSWORD PAGE =======================
 router.get("/reset-password/:token", async (req, res) => {
