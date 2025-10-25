@@ -6,30 +6,50 @@
   <main class="container d-flex align-items-center justify-content-center min-vh-100">
     <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
       <h2 class="mb-4 text-center text-primary">Login</h2>
-      <% if (typeof error !== 'undefined') { %>
+
+      <% if (typeof error !== 'undefined' && error) { %>
         <div class="alert alert-danger py-2"><%= error %></div>
+      <% } else if (typeof success !== 'undefined' && success) { %>
+        <div class="alert alert-success py-2"><%= success %></div>
       <% } %>
+
       <form method="POST" action="/auth/login">
         <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" name="email" class="form-control" placeholder="Email" required>
+          <label class="form-label fw-semibold">Email</label>
+          <input 
+            type="email" 
+            name="email" 
+            class="form-control" 
+            placeholder="Enter your email" 
+            required
+          >
         </div>
+
         <div class="mb-3">
-          <label class="form-label">Password</label>
-          <input type="password" name="password" class="form-control" placeholder="Password" required>
+          <label class="form-label fw-semibold">Password</label>
+          <input 
+            type="password" 
+            name="password" 
+            class="form-control" 
+            placeholder="Enter your password" 
+            required
+          >
         </div>
-      <div class="mb-2">
-        <a href="/auth/forgetpassword">Forget Password</a>
-      </div>
+
+        <div class="mb-2 text-end">
+          <a href="/auth/forgetpassword" class="text-decoration-none small text-primary">
+            Forgot Password?
+          </a>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center">
-          <button class="btn btn-primary px-4">Login</button>
-          <a href="/auth/signup" class="small">Create account</a>
+          <button class="btn btn-primary px-4" type="submit">Login</button>
+          <a href="/auth/signup" class="small text-decoration-none">Create Account</a>
         </div>
       </form>
     </div>
   </main>
+
   <script src="/bootstrap.bundle.min.js"></script>
 </body>
-
-
 </html>

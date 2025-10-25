@@ -220,9 +220,12 @@ router.post("/reset-password/:token", async (req, res) => {
       resetTokenExpire: { $gt: Date.now() },
     });
 
-    if (!user) return res.status(400).send("Invalid or expired token");
+    if (!user)
+      return res
+        .status(400)
+        .render("auth/resetpassword", { error: "Invalid or expired token.", success: null });
 
-    user.password = req.body.password; // ✅ will be auto-hashed by pre-save
+    user.password = req.body.password; // ✅ auto-hashed by pre-save middleware
     user.resetToken = null;
     user.resetTokenExpire = null;
     await user.save();
@@ -237,11 +240,18 @@ router.post("/reset-password/:token", async (req, res) => {
       `
     );
 
-    res.render("auth/login", { success: "Password successfully updated! Please log in." });
+    // ✅ Show message on screen + redirect to login page
+    res.render("auth/login", {
+      success: "Your password has been successfully reset. Please log in.",
+      error: null,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Server error");
+    res
+      .status(500)
+      .render("auth/resetpassword", { error: "Server error, please try again.", success: null });
   }
 });
+
 
 module.exports = router;
